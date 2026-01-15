@@ -1,0 +1,6 @@
+﻿<Solution>
+  <Project Path="PlayerControlsFramework.csproj" />
+  <Project Path="SimpleUIFramework.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="DPSCommon.csproj" />
+</Solution>
