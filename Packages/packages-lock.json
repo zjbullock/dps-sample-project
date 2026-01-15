@@ -1,32 +1,5 @@
 {
   "dependencies": {
-    "com.dynamicproductivitystudio.common": {
-      "version": "file:dps-unity-common",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {}
-    },
-    "com.dynamicproductivitystudio.simple-player-control-framework": {
-      "version": "file:dps-unity-player-controller-framework",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.unity.ugui": "2.0.0",
-        "com.unity.inputsystem": "1.14.1",
-        "com.dynamicproductivitystudio.common": "1.0.0"
-      }
-    },
-    "com.dynamicproductivitystudio.simple-ui-framework": {
-      "version": "file:dps-unity-simple-ui-framework",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.unity.ugui": "2.0.0",
-        "com.unity.inputsystem": "1.14.1",
-        "com.dynamicproductivitystudio.common": "1.0.0",
-        "com.dynamicproductivitystudio.simple-player-control-framework": "1.0.2"
-      }
-    },
     "com.unity.2d.animation": {
       "version": "13.0.2",
       "depth": 0,
