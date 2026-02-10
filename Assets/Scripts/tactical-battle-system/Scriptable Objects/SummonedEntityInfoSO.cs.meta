@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 3a5feab800d1b43469896baaea2070bf
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - characterSpritePortrait: {instanceID: 0}
+  - animator: {instanceID: 0}
+  - summonableEntityObject: {fileID: 8190527667738965492, guid: 7d262288d409cf1478a3f236e2fa6aa3, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

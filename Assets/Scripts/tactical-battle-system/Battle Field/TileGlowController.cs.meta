@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<< HEAD:Assets/Scripts/Controllers/Terrain/TileGlowController.cs.meta
+guid: 968d23c22ecd280409d1225dd3e1ded7
+=======
+guid: 2506beb08d45eec47863f1d81a53a1da
+>>>>>>> 321d78a724596a2208f0fcfc096ceb0fe4797651:Assets/Scripts/Services/DebugModeService.cs.meta
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

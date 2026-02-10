@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: fdd8f9c30c6ae3a43b2dd51292c7e748
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - battleTargetBehavior: {instanceID: 0}
+  - itemSprite: {fileID: 21300000, guid: 0fd65e859e3d92848a7f4b1082439f96, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

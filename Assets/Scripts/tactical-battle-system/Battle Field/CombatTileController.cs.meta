@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 9fbd71772d29a2d4caddf7c87300dac6
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - actionGlow: {fileID: 6409025245710774086, guid: 784f956b27a181b419a9217448b2c638, type: 3}
+  - confirmActionGlow: {fileID: 5310358849085546815, guid: 194eb53e919d2c14c8a718279a6d4ca8, type: 3}
+  - moveGlow: {fileID: 662443509907547754, guid: 2197840cc59620f41843dd0e9a70b6e3, type: 3}
+  - projectedGlow: {fileID: 662443509907547754, guid: ca9f242d4d733fc49bdf173cf530518d, type: 3}
+  - tile: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

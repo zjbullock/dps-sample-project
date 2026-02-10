@@ -1,3 +1,4 @@
+using DPS.Common;
 using DPS.SimpleUIFramework;
 using TMPro;
 using UnityEngine;
@@ -7,6 +8,9 @@ public class UISampleMainPageController : MenuControllerTemplate
 {
     [SerializeField]
     private MenuButtonController _button;
+
+    [SerializeField]
+    GenericDictionary<string, string> _testDictionary;
 
     [SerializeField]
     private int count = 0;

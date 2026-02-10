@@ -939,6 +939,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _button: {fileID: 180941483}
+  _testDictionary:
+    list:
+    - Key: 
+      Value: 
+    keyCollision: 0
   count: 0
 --- !u!225 &2142893643
 CanvasGroup:
