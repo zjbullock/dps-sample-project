@@ -116,7 +116,7 @@ public class CharacterEquipmentAsset {
 [Serializable]
 public class EquipmentSlotsSO {
 
-    // public EquipmentSO MainHand;
+    public WeaponRuneEquipmentSO WeaponRune;
     // public EquipmentSO OffHand;
     public HelmEquipmentSO Helm;
     public BodyEquipmentSO Armor;

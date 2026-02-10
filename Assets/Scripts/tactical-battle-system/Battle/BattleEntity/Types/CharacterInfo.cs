@@ -657,6 +657,9 @@ public class CharacterEquipment {
         RawStats equipmentRawStats = new RawStats();
         EquipmentSlots equipmentSlots = this.EquipmentSlots;
         if (equipmentSlots != null) {
+            if(equipmentSlots.WeaponRune != null && equipmentSlots.WeaponRune.equipmentInfo != null)
+                equipmentRawStats.AddStats(equipmentSlots.WeaponRune.equipmentInfo.rawStats);
+
             if(equipmentSlots.Helm != null && equipmentSlots.Helm.equipmentInfo != null)
                 equipmentRawStats.AddStats(equipmentSlots.Helm.equipmentInfo.rawStats);
 
@@ -738,16 +741,20 @@ public class CharacterEquipment {
 [Serializable]
 public class SerializedCharacterEquipment {
     public SerializedCharacterEquipment() {
-        this.ArmorTypes = ArmorTypes.None;
-        this.EquipmentSlots = null;
+        this._armorType = ArmorTypes.None;
+        this._equipmentSlots = new();
     }
     public SerializedCharacterEquipment(CharacterEquipment characterEquipment) {
-        this.ArmorTypes = characterEquipment.ArmorType;
-        this.EquipmentSlots = characterEquipment != null && characterEquipment.EquipmentSlots != null ? new SerializedCharacterEquipmentSlots(characterEquipment.EquipmentSlots) : null;
+        this._armorType = characterEquipment.ArmorType;
+        this._equipmentSlots = characterEquipment != null && characterEquipment.EquipmentSlots != null ? new SerializedCharacterEquipmentSlots(characterEquipment.EquipmentSlots) : new();
     }
-    public ArmorTypes ArmorTypes;
+
+    private ArmorTypes _armorType;
+    public ArmorTypes ArmorType { get => this._armorType; }
     #nullable enable
-    public SerializedCharacterEquipmentSlots? EquipmentSlots;
+
+    private SerializedCharacterEquipmentSlots _equipmentSlots;
+    public SerializedCharacterEquipmentSlots EquipmentSlots { get => this._equipmentSlots; }
 }
 
 [Serializable]
@@ -755,15 +762,16 @@ public class SerializedCharacterEquipmentSlots {
     public SerializedCharacterEquipmentSlots(EquipmentSlots equipmentSlots) {
         // this.MainHand = "";
         // this.OffHand = "";
+        this.WeaponRune = "";
         this.Helm = "";
         this.Armor = "";
         this.Boots = "";
         this.Accessory_1 = "";
         this.Accessory_2 = "";
 
-        // if(equipmentSlotsSO.MainHand != null) {
-        //     this.MainHand = equipmentSlotsSO.MainHand.name;
-        // }
+        if(equipmentSlots.WeaponRune != null) {
+            this.WeaponRune = equipmentSlots.WeaponRune.name;
+        }
 
         // if(equipmentSlotsSO.OffHand != null) {
         //     this.OffHand = equipmentSlotsSO.OffHand.name;
@@ -789,7 +797,18 @@ public class SerializedCharacterEquipmentSlots {
         }
         
     }
-    // public string MainHand;
+
+    public SerializedCharacterEquipmentSlots ()
+    {
+        this.WeaponRune = "";
+        this.Helm = "";
+        this.Armor = "";
+        this.Boots = "";
+        this.Accessory_1 = "";
+        this.Accessory_2 = "";   
+    }
+
+    public string WeaponRune;
     // public string OffHand;
     public string Helm;
     public string Armor;
@@ -858,6 +877,7 @@ public class EquipmentSlots {
 
     // }
     public EquipmentSlots() {
+        this._weaponRune = null;
         this.body = null;
         this.helm = null;
         this.boots = null;
@@ -879,6 +899,7 @@ public class EquipmentSlots {
     {
         // this.MainHand = equipmentSlotsSO.MainHand;
         // this.OffHand = equipmentSlotsSO.OffHand;
+        this._weaponRune = equipmentSlotsSO.WeaponRune;
         this.body = equipmentSlotsSO.Armor;
         this.helm = equipmentSlotsSO.Helm;
         this.boots = equipmentSlotsSO.Boots;
@@ -887,7 +908,7 @@ public class EquipmentSlots {
     }
 
     public EquipmentSlots(EquipmentSlots equipmentSlots) {
-        // this.MainHand = equipmentSlotsSO.MainHand;
+        this._weaponRune = equipmentSlots._weaponRune;
         // this.OffHand = equipmentSlotsSO.OffHand;
         this.body = equipmentSlots.Body;
         this.helm = equipmentSlots.Helm;
@@ -896,7 +917,9 @@ public class EquipmentSlots {
         this.accessory_2 = equipmentSlots.Accessory_2;
     }
 
-    // public EquipmentSO? MainHand;
+    public WeaponRuneEquipmentSO? _weaponRune;
+    public WeaponRuneEquipmentSO? WeaponRune { get => this._weaponRune; set => this._weaponRune = value; }
+
     // public EquipmentSO? OffHand;
     #nullable enable
     private HelmEquipmentSO? helm;
