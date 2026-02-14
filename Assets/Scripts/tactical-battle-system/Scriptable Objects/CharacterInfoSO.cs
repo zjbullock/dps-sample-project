@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DPS.Common;
+using UnityEngine.AddressableAssets;
 
 namespace DPS.TacticalCombat {
 [CreateAssetMenu(fileName = "Party_Member_CharacterName_#", menuName = "ScriptableObjects/Character Info")]
@@ -48,7 +49,7 @@ public class CharacterInfoSO: ScriptableObject {
 
     public int AllocatedSkillPoints;
 
-    public CharacterEquipmentAsset Equipment;
+    public EquipmentSlotsSO Equipment;
 
     public Sprite characterSpritePortrait;
 
@@ -107,16 +108,9 @@ public class StartingSkills
 }
 
 [Serializable]
-public class CharacterEquipmentAsset {
-
-    public ArmorTypes ArmorType;
-    public EquipmentSlotsSO EquipmentSlots;
-}
-
-[Serializable]
 public class EquipmentSlotsSO {
 
-    public WeaponRuneEquipmentSO WeaponRune;
+    public AssetReferenceT<WeaponRuneEquipmentSO> WeaponRune;
     // public EquipmentSO OffHand;
     public HelmEquipmentSO Helm;
     public BodyEquipmentSO Armor;

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace DPS.TacticalCombat {
-    public enum ArmorTypes {
+    public enum ArmorType {
         None = 0,
         Light = 1,
         Medium = 2,
         Heavy = 3
     }
 
-    public enum WeaponTypes
+    public enum WeaponType
     {
         Shortsword,
         Bow,
@@ -18,8 +18,9 @@ namespace DPS.TacticalCombat {
         Greatsword,
         Guitar,
         Staff,
-        Gun
-
+        Gun,
+        Fist,
+        Wand
     }
 }
 // public enum WeaponTypes {

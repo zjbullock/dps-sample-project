@@ -7,8 +7,8 @@ namespace DPS.TacticalCombat {
     [System.Serializable]
     public class WeaponRuneEquipmentSO : EquipmentSO {
         [SerializeField]
-        private WeaponTypes _weaponType;
+        private WeaponType _weaponType;
 
-        public WeaponTypes WeaponType { get => this._weaponType; }
+        public WeaponType WeaponType { get => this._weaponType; }
     }
 }

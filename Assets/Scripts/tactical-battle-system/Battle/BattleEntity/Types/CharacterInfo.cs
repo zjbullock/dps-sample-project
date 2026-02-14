@@ -4,6 +4,8 @@ using UnityEngine;
 using System;
 using UnityEngine.UI;
 using DPS.Common;
+using UnityEngine.AddressableAssets;
+using System.Threading.Tasks;
 
 namespace DPS.TacticalCombat{
 [Serializable]
@@ -35,8 +37,6 @@ public class CharacterInfo : BattleEntityInfo {
         this.movement = new Movement(characterInfoSO.speed, characterInfoSO.verticalSpeed);
         this.statusAilmentResistances = new StatusAilmentResistances(characterInfoSO.statusAilmentResistances);
         this.terrainMovementOverrides = new GenericDictionary<ElementSO, int>();
-
-        this.GenerateCharacterStatsAndSkills();
 
         this.isFlying = false;
         this.canBeDisplaced = true;
@@ -171,7 +171,7 @@ public class CharacterInfo : BattleEntityInfo {
     }
 
 
-    public void GenerateCharacterStatsAndSkills()
+    public async Task GenerateCharacterStatsAndSkills()
     {
         //Create copy of current base stats
         CharacterStats newCharacterstats = new CharacterStats(this.CharacterInfoSO.BaseCharacterStats);
@@ -210,7 +210,7 @@ public class CharacterInfo : BattleEntityInfo {
 
         //Generate the Raw Stats based on Equipment
         this.RawStats = new RawStats(this.BaseRawStats);
-        this.RawStats.AddStats(this.Equipment.AddEquipmentStats());
+        this.RawStats.AddStats(await this.Equipment.AddEquipmentStats());
 
 
         if (RawStats.mp != RawStats.maxMp)
@@ -351,7 +351,7 @@ public class CharacterInfo : BattleEntityInfo {
     // }
 
     #nullable enable
-    public EquipmentSO? EquipGear(EquipmentSO equipment, EquipmentTypeEnum itemSlot)
+    public async Task<EquipmentSO?> EquipGear(EquipmentSO equipment, EquipmentTypeEnum itemSlot)
     {
         if (equipment == null || this.Equipment == null || this.Equipment.EquipmentSlots == null)
         {
@@ -359,14 +359,14 @@ public class CharacterInfo : BattleEntityInfo {
         }
         EquipmentSO? unEquippedArmor = this.Equipment.EquipmentSlots!.ReplaceEquippedItem(equipment, itemSlot);
 
-        this.GenerateCharacterStatsAndSkills();
+        await this.GenerateCharacterStatsAndSkills();
         return unEquippedArmor;
     }
 
-    public EquipmentSO? UnEquipGear(EquipmentTypeEnum itemSlot) {
+    public async Task<EquipmentSO?> UnEquipGear(EquipmentTypeEnum itemSlot) {
 
         EquipmentSO? unEquippedItem = this.Equipment.EquipmentSlots.ReplaceEquippedItem(null, itemSlot);
-        this.GenerateCharacterStatsAndSkills();
+        await this.GenerateCharacterStatsAndSkills();
         return unEquippedItem;
     }
     #nullable disable
@@ -635,48 +635,65 @@ public class Level {
 public class CharacterEquipment {
 
     public CharacterEquipment() {
-        this.ArmorType = ArmorTypes.None;
         this.EquipmentSlots = new EquipmentSlots();
     }
     public CharacterEquipment(CharacterEquipment characterEquipment) {
-        this.ArmorType = characterEquipment.ArmorType;
         this.EquipmentSlots = new(characterEquipment.EquipmentSlots);
     }
 
-    public CharacterEquipment(CharacterEquipmentAsset characterEquipmentAsset) {
-        this.ArmorType = characterEquipmentAsset.ArmorType;
-        this.EquipmentSlots = new EquipmentSlots(characterEquipmentAsset.EquipmentSlots);
+    public CharacterEquipment(EquipmentSlotsSO equipmentSlots) {
+        this.EquipmentSlots = new EquipmentSlots(equipmentSlots);
     }
 
-    public ArmorTypes ArmorType;
     #nullable enable
     public EquipmentSlots EquipmentSlots;
 
     
-    public RawStats AddEquipmentStats() {
-        RawStats equipmentRawStats = new RawStats();
+    public async Task<RawStats> AddEquipmentStats() {
         EquipmentSlots equipmentSlots = this.EquipmentSlots;
-        if (equipmentSlots != null) {
-            if(equipmentSlots.WeaponRune != null && equipmentSlots.WeaponRune.equipmentInfo != null)
-                equipmentRawStats.AddStats(equipmentSlots.WeaponRune.equipmentInfo.rawStats);
+        if (equipmentSlots == null) {
+            return new RawStats();
+        }
 
-            if(equipmentSlots.Helm != null && equipmentSlots.Helm.equipmentInfo != null)
-                equipmentRawStats.AddStats(equipmentSlots.Helm.equipmentInfo.rawStats);
+        RawStats equipmentRawStats = new();
+        List<AssetReference> equipmentAssets = new();
+        if(equipmentSlots.WeaponRune != null && equipmentSlots.WeaponRune.RuntimeKeyIsValid() )
+            {
+                Debug.Log($"Asset: {equipmentSlots.WeaponRune}");
+                equipmentAssets.Add(equipmentSlots.WeaponRune);
+            }
 
-            if(equipmentSlots.Body != null && equipmentSlots.Body.equipmentInfo != null)
-                equipmentRawStats.AddStats(equipmentSlots.Body.equipmentInfo.rawStats);
+            // equipmentRawStats.AddStats(equipmentSlots.WeaponRune.equipmentInfo.rawStats);
 
-            if(equipmentSlots.Boots != null && equipmentSlots.Boots.equipmentInfo != null)
-                equipmentRawStats.AddStats(equipmentSlots.Boots.equipmentInfo.rawStats);
+        if(equipmentSlots.Helm != null)
+            equipmentRawStats.AddStats(equipmentSlots.Helm.equipmentInfo.rawStats);
 
-            if(equipmentSlots.Accessory_1 != null && equipmentSlots.Accessory_1.equipmentInfo != null) 
-                equipmentRawStats.AddStats(equipmentSlots.Accessory_1.equipmentInfo.rawStats);
+        if(equipmentSlots.Body != null)
+            equipmentRawStats.AddStats(equipmentSlots.Body.equipmentInfo.rawStats);
 
-            if(equipmentSlots.Accessory_2 != null && equipmentSlots.Accessory_2.equipmentInfo != null) 
-                equipmentRawStats.AddStats(equipmentSlots.Accessory_2.equipmentInfo.rawStats);
+        if(equipmentSlots.Boots != null)
+            equipmentRawStats.AddStats(equipmentSlots.Boots.equipmentInfo.rawStats);
+
+        if(equipmentSlots.Accessory_1 != null) 
+            equipmentRawStats.AddStats(equipmentSlots.Accessory_1.equipmentInfo.rawStats);
+
+        if(equipmentSlots.Accessory_2 != null) 
+            equipmentRawStats.AddStats(equipmentSlots.Accessory_2.equipmentInfo.rawStats);
+
+        List<EquipmentSO>? equipmentList = await GeneralUtilsStatic.GetScriptableObjectAssetReference<EquipmentSO>(equipmentAssets) as List<EquipmentSO>;
+        if (equipmentList == null)
+        {
+            return equipmentRawStats;
+
+        }
+
+        foreach(EquipmentSO equipment in equipmentList)
+        {
+            equipmentRawStats.AddStats(equipment.equipmentInfo.rawStats);
         }
 
         return equipmentRawStats;
+
     }
 
     public StatusAilmentResistances AddEquipmentStatusAilmentResistances() {
@@ -741,16 +758,13 @@ public class CharacterEquipment {
 [Serializable]
 public class SerializedCharacterEquipment {
     public SerializedCharacterEquipment() {
-        this._armorType = ArmorTypes.None;
         this._equipmentSlots = new();
     }
     public SerializedCharacterEquipment(CharacterEquipment characterEquipment) {
-        this._armorType = characterEquipment.ArmorType;
         this._equipmentSlots = characterEquipment != null && characterEquipment.EquipmentSlots != null ? new SerializedCharacterEquipmentSlots(characterEquipment.EquipmentSlots) : new();
     }
 
-    private ArmorTypes _armorType;
-    public ArmorTypes ArmorType { get => this._armorType; }
+
     #nullable enable
 
     private SerializedCharacterEquipmentSlots _equipmentSlots;
@@ -770,7 +784,7 @@ public class SerializedCharacterEquipmentSlots {
         this.Accessory_2 = "";
 
         if(equipmentSlots.WeaponRune != null) {
-            this.WeaponRune = equipmentSlots.WeaponRune.name;
+            this.WeaponRune = equipmentSlots.WeaponRune.AssetGUID;
         }
 
         // if(equipmentSlotsSO.OffHand != null) {
@@ -852,23 +866,6 @@ public class SerializedCharacterEquipmentSlots {
     // }
 }
 
-[Serializable]
-public class EquipmentTypes {
-    public EquipmentTypes () {
-        this.Armor = ArmorTypes.None;
-        // this.MainHand = WeaponTypes.None;
-        // this.OffHand = WeaponTypes.None;
-    }
-    public EquipmentTypes(EquipmentTypes equipmentTypes) {
-        this.Armor = equipmentTypes.Armor;
-        // this.MainHand = equipmentTypes.MainHand;
-        // this.OffHand = equipmentTypes.OffHand;
-    }
-    public ArmorTypes Armor;
-    // public WeaponTypes MainHand;
-    // public WeaponTypes OffHand;
-}
-
 
 [Serializable]
 
@@ -878,17 +875,17 @@ public class EquipmentSlots {
     // }
     public EquipmentSlots() {
         this._weaponRune = null;
-        this.body = null;
-        this.helm = null;
-        this.boots = null;
-        this.accessory_1 = null;
-        this.accessory_2 = null;
+        this._body = null;
+        this._helm = null;
+        this._boots = null;
+        this._accessory_1 = null;
+        this._accessory_2 = null;
     }
 
     public List<ActiveSkillSO> GetEquipmentActiveSkills()
     {
         List<ActiveSkillSO> equipmentSkills = new();
-        if (this.body != null && this.body.equipmentInfo.activeSkillSO != null)
+        if (this._body != null && this._body.equipmentInfo.activeSkillSO != null)
         {
             
         }
@@ -900,46 +897,46 @@ public class EquipmentSlots {
         // this.MainHand = equipmentSlotsSO.MainHand;
         // this.OffHand = equipmentSlotsSO.OffHand;
         this._weaponRune = equipmentSlotsSO.WeaponRune;
-        this.body = equipmentSlotsSO.Armor;
-        this.helm = equipmentSlotsSO.Helm;
-        this.boots = equipmentSlotsSO.Boots;
-        this.accessory_1 = equipmentSlotsSO.Accessory_1;
-        this.accessory_2 = equipmentSlotsSO.Accessory_2;
+        this._body = equipmentSlotsSO.Armor;
+        this._helm = equipmentSlotsSO.Helm;
+        this._boots = equipmentSlotsSO.Boots;
+        this._accessory_1 = equipmentSlotsSO.Accessory_1;
+        this._accessory_2 = equipmentSlotsSO.Accessory_2;
     }
 
     public EquipmentSlots(EquipmentSlots equipmentSlots) {
         this._weaponRune = equipmentSlots._weaponRune;
         // this.OffHand = equipmentSlotsSO.OffHand;
-        this.body = equipmentSlots.Body;
-        this.helm = equipmentSlots.Helm;
-        this.boots = equipmentSlots.Boots;
-        this.accessory_1 = equipmentSlots.Accessory_1;
-        this.accessory_2 = equipmentSlots.Accessory_2;
+        this._body = equipmentSlots.Body;
+        this._helm = equipmentSlots.Helm;
+        this._boots = equipmentSlots.Boots;
+        this._accessory_1 = equipmentSlots.Accessory_1;
+        this._accessory_2 = equipmentSlots.Accessory_2;
     }
 
-    public WeaponRuneEquipmentSO? _weaponRune;
-    public WeaponRuneEquipmentSO? WeaponRune { get => this._weaponRune; set => this._weaponRune = value; }
+    public AssetReferenceT<WeaponRuneEquipmentSO>? _weaponRune;
+    public AssetReferenceT<WeaponRuneEquipmentSO>? WeaponRune { get => this._weaponRune; set => this._weaponRune = value; }
 
     // public EquipmentSO? OffHand;
     #nullable enable
-    private HelmEquipmentSO? helm;
+    private HelmEquipmentSO? _helm;
 
-    public HelmEquipmentSO? Helm { get => this.helm; set => this.helm = value; }
+    public HelmEquipmentSO? Helm { get => this._helm; set => this._helm = value; }
 
-    private BodyEquipmentSO? body;
+    private BodyEquipmentSO? _body;
 
-    public BodyEquipmentSO? Body { get => this.body; set => this.body = value;}
+    public BodyEquipmentSO? Body { get => this._body; set => this._body = value;}
 
-    private BootsEquipmentSO? boots;
+    private BootsEquipmentSO? _boots;
 
-    public BootsEquipmentSO? Boots { get => this.boots; set => this.boots = value;}
+    public BootsEquipmentSO? Boots { get => this._boots; set => this._boots = value;}
 
     #nullable disable
-    private AccessoryEquipmentSO accessory_1;
-    public AccessoryEquipmentSO Accessory_1 { get => this.accessory_1; set => this.accessory_1 = value; }
+    private AccessoryEquipmentSO _accessory_1;
+    public AccessoryEquipmentSO Accessory_1 { get => this._accessory_1; set => this._accessory_1 = value; }
 
-    private AccessoryEquipmentSO accessory_2;
-    public AccessoryEquipmentSO Accessory_2 { get => this.accessory_2; set => this.accessory_2 = value; }
+    private AccessoryEquipmentSO _accessory_2;
+    public AccessoryEquipmentSO Accessory_2 { get => this._accessory_2; set => this._accessory_2 = value; }
 
     #nullable enable
     public EquipmentSO? ReplaceEquippedItem(EquipmentSO? equipmentSO, EquipmentTypeEnum equipmentType)
@@ -974,53 +971,53 @@ public class EquipmentSlots {
 
     private HelmEquipmentSO? ReplaceEquippedHelm(HelmEquipmentSO? newHelm) {
         HelmEquipmentSO? unEquippedItem = null;
-        if (this.helm != null) {
-            unEquippedItem = this.helm as HelmEquipmentSO;
+        if (this._helm != null) {
+            unEquippedItem = this._helm as HelmEquipmentSO;
         }
 
-        this.helm = newHelm;
+        this._helm = newHelm;
 
         return unEquippedItem;
     }
 
     private BodyEquipmentSO? ReplaceEquippedArmor(BodyEquipmentSO? newArmor) {
         BodyEquipmentSO? unEquippedItem = null;
-        if (this.body != null) {
-            unEquippedItem = this.body as BodyEquipmentSO;
+        if (this._body != null) {
+            unEquippedItem = this._body as BodyEquipmentSO;
         }
 
-        this.body = newArmor;
+        this._body = newArmor;
 
         return unEquippedItem;
     }
 
     private BootsEquipmentSO? ReplaceEquippedBoots(BootsEquipmentSO? newBoots) {
         BootsEquipmentSO? unEquippedItem = null;
-        if (this.boots != null) {
-            unEquippedItem = this.boots as BootsEquipmentSO;
+        if (this._boots != null) {
+            unEquippedItem = this._boots as BootsEquipmentSO;
         }
 
-        this.boots = newBoots;
+        this._boots = newBoots;
         return unEquippedItem;
     }
 
     private AccessoryEquipmentSO? ReplaceEquippedAccessory_1(AccessoryEquipmentSO? accessory) {
         AccessoryEquipmentSO? unEquippedItem = null;
-        if (this.accessory_1 != null) {
-            unEquippedItem = this.accessory_1 as AccessoryEquipmentSO;
+        if (this._accessory_1 != null) {
+            unEquippedItem = this._accessory_1 as AccessoryEquipmentSO;
         }
 
-        this.accessory_1 = accessory;
+        this._accessory_1 = accessory;
         return unEquippedItem;
     }
 
     private AccessoryEquipmentSO? ReplaceEquippedAccessory_2(AccessoryEquipmentSO? accessory) {
         AccessoryEquipmentSO? unEquippedItem = null;
-        if (this.accessory_2 != null) {
-            unEquippedItem = this.accessory_2 as AccessoryEquipmentSO;
+        if (this._accessory_2 != null) {
+            unEquippedItem = this._accessory_2 as AccessoryEquipmentSO;
         }
 
-        this.accessory_2 = accessory;
+        this._accessory_2 = accessory;
         return unEquippedItem;
     }
     

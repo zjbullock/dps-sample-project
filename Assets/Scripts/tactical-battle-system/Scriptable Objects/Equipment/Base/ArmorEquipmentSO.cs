@@ -6,6 +6,6 @@ namespace DPS.TacticalCombat{
 public abstract class ArmorEquipmentSO : EquipmentSO
 {   
 
-    public ArmorTypes equipmentType;
+    public ArmorType equipmentType;
 }
 }

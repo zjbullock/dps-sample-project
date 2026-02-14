@@ -3,6 +3,7 @@ using UnityEngine;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DPS.TacticalCombat{
 [Serializable]
@@ -187,7 +188,7 @@ public class SkillTierBase {
 
         public abstract string GetSkillName();
 
-        public void LearnSkill(CharacterInfo characterInfo)
+        public async Task LearnSkill(CharacterInfo characterInfo)
         {
             if (this.isLearned)
             {
@@ -196,7 +197,7 @@ public class SkillTierBase {
             this.isLearned = true;
             characterInfo.AllocatedSkillPoints++;
             characterInfo.SkillPoints--;
-            characterInfo.GenerateCharacterStatsAndSkills();
+            await characterInfo.GenerateCharacterStatsAndSkills();
         }
     }
 
