@@ -224,7 +224,7 @@ public class CharacterInfo : BattleEntityInfo {
         }
 
         StatusAilmentResistances newStatusAilmentResistances = new StatusAilmentResistances();
-        newStatusAilmentResistances.AddStatusAilmentResistance(this.Equipment.AddEquipmentStatusAilmentResistances());
+        newStatusAilmentResistances.AddStatusAilmentResistance(await this.Equipment.AddEquipmentStatusAilmentResistances());
         this.statusAilmentResistances = newStatusAilmentResistances;
         this.ExecutePostEquipmentStatAddPassiveSkill(this);
         // PassiveSkillStatic.ActivateLearnedPassiveAbilities(this);
@@ -351,21 +351,21 @@ public class CharacterInfo : BattleEntityInfo {
     // }
 
     #nullable enable
-    public async Task<EquipmentSO?> EquipGear(EquipmentSO equipment, EquipmentTypeEnum itemSlot)
+    public async Task<AssetReference?> EquipGear(AssetReferenceT<EquipmentSO> equipment, EquipmentTypeEnum itemSlot)
     {
         if (equipment == null || this.Equipment == null || this.Equipment.EquipmentSlots == null)
         {
             return null;
         }
-        EquipmentSO? unEquippedArmor = this.Equipment.EquipmentSlots!.ReplaceEquippedItem(equipment, itemSlot);
+        AssetReference? unEquippedArmor = this.Equipment.EquipmentSlots!.ReplaceEquippedItem(equipment, itemSlot);
 
         await this.GenerateCharacterStatsAndSkills();
         return unEquippedArmor;
     }
 
-    public async Task<EquipmentSO?> UnEquipGear(EquipmentTypeEnum itemSlot) {
+    public async Task<AssetReference?> UnEquipGear(EquipmentTypeEnum itemSlot) {
 
-        EquipmentSO? unEquippedItem = this.Equipment.EquipmentSlots.ReplaceEquippedItem(null, itemSlot);
+        AssetReference? unEquippedItem = this.Equipment.EquipmentSlots.ReplaceEquippedItem(null, itemSlot);
         await this.GenerateCharacterStatsAndSkills();
         return unEquippedItem;
     }
@@ -442,10 +442,10 @@ public class CharacterInfo : BattleEntityInfo {
         return this.GetSkillInfo().GetLearnedActiveSkills();
     }
 
-    public override List<ActiveSkillSO> GetEquippedActiveSkills()
+    public override async Task<List<ActiveSkillSO>> GetEquippedActiveSkills()
     {
         List<ActiveSkillSO> equippedSkills = new(this.GetSkillInfo().EquippedSkills ?? new());
-        foreach (ActiveSkillSO activeSkillSO in this.Equipment.GetEquipmentActiveSkills())
+        foreach (ActiveSkillSO activeSkillSO in await this.Equipment.GetEquipmentActiveSkills())
         {
             if (equippedSkills.Contains(activeSkillSO))
             {
@@ -656,31 +656,8 @@ public class CharacterEquipment {
         }
 
         RawStats equipmentRawStats = new();
-        List<AssetReference> equipmentAssets = new();
-        if(equipmentSlots.WeaponRune != null && equipmentSlots.WeaponRune.RuntimeKeyIsValid() )
-            {
-                Debug.Log($"Asset: {equipmentSlots.WeaponRune}");
-                equipmentAssets.Add(equipmentSlots.WeaponRune);
-            }
-
-            // equipmentRawStats.AddStats(equipmentSlots.WeaponRune.equipmentInfo.rawStats);
-
-        if(equipmentSlots.Helm != null)
-            equipmentRawStats.AddStats(equipmentSlots.Helm.equipmentInfo.rawStats);
-
-        if(equipmentSlots.Body != null)
-            equipmentRawStats.AddStats(equipmentSlots.Body.equipmentInfo.rawStats);
-
-        if(equipmentSlots.Boots != null)
-            equipmentRawStats.AddStats(equipmentSlots.Boots.equipmentInfo.rawStats);
-
-        if(equipmentSlots.Accessory_1 != null) 
-            equipmentRawStats.AddStats(equipmentSlots.Accessory_1.equipmentInfo.rawStats);
-
-        if(equipmentSlots.Accessory_2 != null) 
-            equipmentRawStats.AddStats(equipmentSlots.Accessory_2.equipmentInfo.rawStats);
-
-        List<EquipmentSO>? equipmentList = await GeneralUtilsStatic.GetScriptableObjectAssetReference<EquipmentSO>(equipmentAssets) as List<EquipmentSO>;
+        
+        List<EquipmentSO>? equipmentList = await this.GetLoadedEquipmentList();
         if (equipmentList == null)
         {
             return equipmentRawStats;
@@ -696,32 +673,63 @@ public class CharacterEquipment {
 
     }
 
-    public StatusAilmentResistances AddEquipmentStatusAilmentResistances() {
-        StatusAilmentResistances statusAilmentResistances = new StatusAilmentResistances();
+    public async Task<List<EquipmentSO>?> GetLoadedEquipmentList()
+    {
         EquipmentSlots equipmentSlots = this.EquipmentSlots;
-        if (equipmentSlots != null) {
-            if(equipmentSlots.Helm != null && equipmentSlots.Helm.equipmentInfo != null)
-                statusAilmentResistances.AddStatusAilmentResistance(equipmentSlots.Helm.equipmentInfo.statusAilmentResistances);
 
-            if(equipmentSlots.Body != null && equipmentSlots.Body.equipmentInfo != null)
-                statusAilmentResistances.AddStatusAilmentResistance(equipmentSlots.Body.equipmentInfo.statusAilmentResistances);
+        List<AssetReference> equipmentAssets = new();
+        if(equipmentSlots.WeaponRune != null && equipmentSlots.WeaponRune.RuntimeKeyIsValid() ) {
+            Debug.Log($"Asset: {equipmentSlots.WeaponRune}");
+            equipmentAssets.Add(equipmentSlots.WeaponRune);
+        }
+            // equipmentRawStats.AddStats(equipmentSlots.WeaponRune.equipmentInfo.rawStats);
 
-            if(equipmentSlots.Boots != null && equipmentSlots.Boots.equipmentInfo != null)
-                statusAilmentResistances.AddStatusAilmentResistance(equipmentSlots.Boots.equipmentInfo.statusAilmentResistances);
-
-            if(equipmentSlots.Accessory_1 != null && equipmentSlots.Accessory_1.equipmentInfo != null) 
-                statusAilmentResistances.AddStatusAilmentResistance(equipmentSlots.Accessory_1.equipmentInfo.statusAilmentResistances);
-
-            if(equipmentSlots.Accessory_2 != null && equipmentSlots.Accessory_2.equipmentInfo != null) 
-                statusAilmentResistances.AddStatusAilmentResistance(equipmentSlots.Accessory_2.equipmentInfo.statusAilmentResistances);
+        if(equipmentSlots.Helm != null && equipmentSlots.Helm.RuntimeKeyIsValid()) {
+            Debug.Log($"Asset: {equipmentSlots.Helm}");
+            equipmentAssets.Add(equipmentSlots.Helm);          
         }
 
+        if(equipmentSlots.Body != null && equipmentSlots.Body.RuntimeKeyIsValid())
+            equipmentAssets.Add(equipmentSlots.Body);
 
+        if(equipmentSlots.Boots != null && equipmentSlots.Boots.RuntimeKeyIsValid())
+            equipmentAssets.Add(equipmentSlots.Boots);
 
+        if(equipmentSlots.Accessory_1 != null && equipmentSlots.Accessory_1.RuntimeKeyIsValid()) 
+            equipmentAssets.Add(equipmentSlots.Accessory_1);
+
+        if(equipmentSlots.Accessory_2 != null && equipmentSlots.Accessory_2.RuntimeKeyIsValid()) 
+            equipmentAssets.Add(equipmentSlots.Accessory_2);
+        
+        return await GeneralUtilsStatic.GetObjectListByAssetReferences<EquipmentSO>(equipmentAssets) as List<EquipmentSO>;
+    }
+
+    public async Task<StatusAilmentResistances> AddEquipmentStatusAilmentResistances() {
+        EquipmentSlots equipmentSlots = this.EquipmentSlots;
+
+        if (equipmentSlots == null)
+        {
+            return new StatusAilmentResistances();
+        }
+
+        StatusAilmentResistances statusAilmentResistances = new StatusAilmentResistances();
+            // if(equipmentSlots.Helm != null && equipmentSlots.Helm.equipmentInfo != null)
+            //     statusAilmentResistances.AddStatusAilmentResistance(equipmentSlots.Helm.equipmentInfo.statusAilmentResistances);
+
+        if (await this.GetLoadedEquipmentList() is not List<EquipmentSO> equipmentSOs)
+        {
+            return statusAilmentResistances;
+        }
+
+        foreach (EquipmentSO equipmentSO in equipmentSOs)
+        {
+            statusAilmentResistances.AddStatusAilmentResistance(equipmentSO.equipmentInfo.statusAilmentResistances);
+        }
+        
         return statusAilmentResistances;
     }  
 
-    public List<ActiveSkillSO> GetEquipmentActiveSkills() {
+    public async Task<List<ActiveSkillSO>> GetEquipmentActiveSkills() {
         List<ActiveSkillSO> itemActiveSkills = new List<ActiveSkillSO>();
 
         Action<ActiveSkillSO> addActiveSkill = (ActiveSkillSO activeSkillSO) => {
@@ -735,22 +743,16 @@ public class CharacterEquipment {
             return itemActiveSkills;
         }
 
-        if(equipmentSlots.Helm != null && equipmentSlots.Helm.equipmentInfo != null && equipmentSlots.Helm.equipmentInfo.activeSkillSO != null)
-            addActiveSkill(equipmentSlots.Helm.equipmentInfo.activeSkillSO);
+        if (await this.GetLoadedEquipmentList() is not List<EquipmentSO> equipmentSOs)
+        {
+            return itemActiveSkills;
+        }
 
-        if(equipmentSlots.Body != null && equipmentSlots.Body.equipmentInfo != null && equipmentSlots.Body.equipmentInfo.activeSkillSO != null)
-            addActiveSkill(equipmentSlots.Body.equipmentInfo.activeSkillSO);
-
-        if(equipmentSlots.Boots != null && equipmentSlots.Boots.equipmentInfo != null && equipmentSlots.Boots.equipmentInfo.activeSkillSO != null)
-            addActiveSkill(equipmentSlots.Boots.equipmentInfo.activeSkillSO);
-
-        if(equipmentSlots.Accessory_1 != null && equipmentSlots.Accessory_1.equipmentInfo != null && equipmentSlots.Accessory_1.equipmentInfo.activeSkillSO != null)
-            addActiveSkill(equipmentSlots.Accessory_1.equipmentInfo.activeSkillSO);
-        if(equipmentSlots.Accessory_2 != null && equipmentSlots.Accessory_2.equipmentInfo != null && equipmentSlots.Accessory_2.equipmentInfo.activeSkillSO != null)
-            addActiveSkill(equipmentSlots.Accessory_2.equipmentInfo.activeSkillSO);
-
-
-
+        foreach (EquipmentSO equipmentSO in equipmentSOs)
+        {
+            addActiveSkill(equipmentSO.equipmentInfo.activeSkillSO);
+        }
+        
         return itemActiveSkills;
     } 
 }
@@ -792,22 +794,22 @@ public class SerializedCharacterEquipmentSlots {
         // }
 
         if(equipmentSlots.Helm != null) {
-            this.Helm = equipmentSlots.Helm.name;
+            this.Helm = equipmentSlots.Helm.AssetGUID;
         }
 
         if(equipmentSlots.Body != null) {
-            this.Armor = equipmentSlots.Body.name;
+            this.Armor = equipmentSlots.Body.AssetGUID;
         }
                 
         if(equipmentSlots.Boots != null) {
-            this.Boots = equipmentSlots.Boots.name;
+            this.Boots = equipmentSlots.Boots.AssetGUID;
         }
 
         if(equipmentSlots.Accessory_1 != null) {
-            this.Accessory_1 = equipmentSlots.Accessory_1.name;
+            this.Accessory_1 = equipmentSlots.Accessory_1.AssetGUID;
         }
         if(equipmentSlots.Accessory_2 != null) {
-            this.Accessory_2 = equipmentSlots.Accessory_2.name;
+            this.Accessory_2 = equipmentSlots.Accessory_2.AssetGUID;
         }
         
     }
@@ -881,16 +883,6 @@ public class EquipmentSlots {
         this._accessory_1 = null;
         this._accessory_2 = null;
     }
-
-    public List<ActiveSkillSO> GetEquipmentActiveSkills()
-    {
-        List<ActiveSkillSO> equipmentSkills = new();
-        if (this._body != null && this._body.equipmentInfo.activeSkillSO != null)
-        {
-            
-        }
-        return equipmentSkills;
-    }
     
     public EquipmentSlots(EquipmentSlotsSO equipmentSlotsSO)
     {
@@ -914,47 +906,55 @@ public class EquipmentSlots {
         this._accessory_2 = equipmentSlots.Accessory_2;
     }
 
-    public AssetReferenceT<WeaponRuneEquipmentSO>? _weaponRune;
+    [SerializeField]
+    private AssetReferenceT<WeaponRuneEquipmentSO>? _weaponRune;
     public AssetReferenceT<WeaponRuneEquipmentSO>? WeaponRune { get => this._weaponRune; set => this._weaponRune = value; }
 
     // public EquipmentSO? OffHand;
     #nullable enable
-    private HelmEquipmentSO? _helm;
+    [SerializeField]
 
-    public HelmEquipmentSO? Helm { get => this._helm; set => this._helm = value; }
+    private AssetReferenceT<HelmEquipmentSO>? _helm;
 
-    private BodyEquipmentSO? _body;
+    public AssetReferenceT<HelmEquipmentSO>? Helm { get => this._helm; }
+    [SerializeField]
 
-    public BodyEquipmentSO? Body { get => this._body; set => this._body = value;}
+    private AssetReferenceT<BodyEquipmentSO>? _body;
 
-    private BootsEquipmentSO? _boots;
+    public AssetReferenceT<BodyEquipmentSO>? Body { get => this._body; }
+    [SerializeField]
 
-    public BootsEquipmentSO? Boots { get => this._boots; set => this._boots = value;}
+    private AssetReferenceT<BootsEquipmentSO>? _boots;
 
+    public AssetReferenceT<BootsEquipmentSO>? Boots { get => this._boots; }
+
+    [SerializeField]
+
+    private AssetReferenceT<AccessoryEquipmentSO>? _accessory_1;
+    public AssetReferenceT<AccessoryEquipmentSO>? Accessory_1 { get => this._accessory_1;  }
+    [SerializeField]
+
+    private AssetReferenceT<AccessoryEquipmentSO>? _accessory_2;
+    public AssetReferenceT<AccessoryEquipmentSO>? Accessory_2 { get => this._accessory_2; }
     #nullable disable
-    private AccessoryEquipmentSO _accessory_1;
-    public AccessoryEquipmentSO Accessory_1 { get => this._accessory_1; set => this._accessory_1 = value; }
-
-    private AccessoryEquipmentSO _accessory_2;
-    public AccessoryEquipmentSO Accessory_2 { get => this._accessory_2; set => this._accessory_2 = value; }
 
     #nullable enable
-    public EquipmentSO? ReplaceEquippedItem(EquipmentSO? equipmentSO, EquipmentTypeEnum equipmentType)
+    public AssetReference? ReplaceEquippedItem(AssetReference? equipmentSO, EquipmentTypeEnum equipmentType)
     {
-
+        
         //Determine item to replace
         switch (equipmentType)
         {
             case EquipmentTypeEnum.Helmet:
-                return this.ReplaceEquippedHelm(equipmentSO as HelmEquipmentSO);
+                return this.ReplaceEquippedHelm(equipmentSO != null ? new (equipmentSO.AssetGUID) : null);
             case EquipmentTypeEnum.Armor:
-                return this.ReplaceEquippedArmor(equipmentSO as BodyEquipmentSO);
+                return this.ReplaceEquippedArmor(equipmentSO != null ? new (equipmentSO.AssetGUID) : null);
             case EquipmentTypeEnum.Boots:
-                return this.ReplaceEquippedBoots(equipmentSO as BootsEquipmentSO);
+                return this.ReplaceEquippedBoots(equipmentSO != null ? new (equipmentSO.AssetGUID) : null);
             case EquipmentTypeEnum.Accessory_1:
-                return this.ReplaceEquippedAccessory_1(equipmentSO as AccessoryEquipmentSO);
+                return this.ReplaceEquippedAccessory_1(equipmentSO != null ? new (equipmentSO.AssetGUID) : null);
             case EquipmentTypeEnum.Accessory_2:
-                return this.ReplaceEquippedAccessory_2(equipmentSO as AccessoryEquipmentSO);
+                return this.ReplaceEquippedAccessory_2(equipmentSO != null ? new (equipmentSO.AssetGUID) : null);
         }
 
         return null;
@@ -969,10 +969,10 @@ public class EquipmentSlots {
 
     #nullable enable
 
-    private HelmEquipmentSO? ReplaceEquippedHelm(HelmEquipmentSO? newHelm) {
-        HelmEquipmentSO? unEquippedItem = null;
+    private AssetReferenceT<HelmEquipmentSO>? ReplaceEquippedHelm(AssetReferenceT<HelmEquipmentSO>? newHelm) {
+        AssetReferenceT<HelmEquipmentSO>? unEquippedItem = null;
         if (this._helm != null) {
-            unEquippedItem = this._helm as HelmEquipmentSO;
+            unEquippedItem = this._helm;
         }
 
         this._helm = newHelm;
@@ -980,10 +980,10 @@ public class EquipmentSlots {
         return unEquippedItem;
     }
 
-    private BodyEquipmentSO? ReplaceEquippedArmor(BodyEquipmentSO? newArmor) {
-        BodyEquipmentSO? unEquippedItem = null;
+    private AssetReferenceT<BodyEquipmentSO>? ReplaceEquippedArmor(AssetReferenceT<BodyEquipmentSO>? newArmor) {
+        AssetReferenceT<BodyEquipmentSO>? unEquippedItem = null;
         if (this._body != null) {
-            unEquippedItem = this._body as BodyEquipmentSO;
+            unEquippedItem = this._body;
         }
 
         this._body = newArmor;
@@ -991,30 +991,30 @@ public class EquipmentSlots {
         return unEquippedItem;
     }
 
-    private BootsEquipmentSO? ReplaceEquippedBoots(BootsEquipmentSO? newBoots) {
-        BootsEquipmentSO? unEquippedItem = null;
+    private AssetReferenceT<BootsEquipmentSO>? ReplaceEquippedBoots(AssetReferenceT<BootsEquipmentSO>? newBoots) {
+        AssetReferenceT<BootsEquipmentSO>? unEquippedItem = null;
         if (this._boots != null) {
-            unEquippedItem = this._boots as BootsEquipmentSO;
+            unEquippedItem = this._boots;
         }
 
         this._boots = newBoots;
         return unEquippedItem;
     }
 
-    private AccessoryEquipmentSO? ReplaceEquippedAccessory_1(AccessoryEquipmentSO? accessory) {
-        AccessoryEquipmentSO? unEquippedItem = null;
+    private AssetReferenceT<AccessoryEquipmentSO>? ReplaceEquippedAccessory_1(AssetReferenceT<AccessoryEquipmentSO>? accessory) {
+        AssetReferenceT<AccessoryEquipmentSO>? unEquippedItem = null;
         if (this._accessory_1 != null) {
-            unEquippedItem = this._accessory_1 as AccessoryEquipmentSO;
+            unEquippedItem = this._accessory_1;
         }
 
         this._accessory_1 = accessory;
         return unEquippedItem;
     }
 
-    private AccessoryEquipmentSO? ReplaceEquippedAccessory_2(AccessoryEquipmentSO? accessory) {
-        AccessoryEquipmentSO? unEquippedItem = null;
+    private AssetReferenceT<AccessoryEquipmentSO>? ReplaceEquippedAccessory_2(AssetReferenceT<AccessoryEquipmentSO>? accessory) {
+        AssetReferenceT<AccessoryEquipmentSO>? unEquippedItem = null;
         if (this._accessory_2 != null) {
-            unEquippedItem = this._accessory_2 as AccessoryEquipmentSO;
+            unEquippedItem = this._accessory_2;
         }
 
         this._accessory_2 = accessory;

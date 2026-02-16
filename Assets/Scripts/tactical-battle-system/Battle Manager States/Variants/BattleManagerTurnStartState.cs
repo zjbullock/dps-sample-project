@@ -6,8 +6,11 @@ namespace DPS.TacticalCombat {
 [System.Serializable]
 public class BattleControllerTurnStartState : BattleControllerBaseState
 {
+        public BattleControllerTurnStartState(string stateName) : base(stateName)
+        {
+        }
 
-    public override void EnterState(BattleManager battleController)
+        public override void EnterState(BattleManager battleController)
     {
         battleController.SetTurnCount(battleController.TurnCount + 1);
         if (battleController.TurnCount > 1) {

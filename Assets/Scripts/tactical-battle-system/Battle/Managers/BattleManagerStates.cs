@@ -68,17 +68,17 @@ public class BattleManagerStates
 
         public BattleManagerStates()
         {
-            this._startState = new();
-            this._turnStartState = new();
-            this._determineCommandPhase = new();
-            this._enemyCommandState = new();
-            this._playerCommandstate = new();
-            this._declareActionPhaseState = new();
-            this._resultActionPhaseState = new();
-            this._enemyMovementState = new();
-            this._endPhaseState = new ();
-            this._winState = new();
-            this._loseState = new();
+            this._startState = new("Battle Start");
+            this._turnStartState = new("Turn Start");
+            this._determineCommandPhase = new("Determine Command");
+            this._enemyCommandState = new("Enemy Command");
+            this._playerCommandstate = new("Player Command");
+            this._declareActionPhaseState = new("Declare Action");
+            this._resultActionPhaseState = new("Result Action");
+            this._enemyMovementState = new("Enemy Movement");
+            this._endPhaseState = new ("End Phase");
+            this._winState = new("Win");
+            this._loseState = new("Lose");
 
 
             this._currentState = null;

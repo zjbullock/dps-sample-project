@@ -5,8 +5,11 @@ using UnityEngine;
 namespace DPS.TacticalCombat {
 public class BattleControllerStartState : BattleControllerBaseState
 {
+        public BattleControllerStartState(string stateName) : base(stateName)
+        {
+        }
 
-    public override void UpdateState(BattleManager battleController)
+        public override void UpdateState(BattleManager battleController)
     {
         return;
     }

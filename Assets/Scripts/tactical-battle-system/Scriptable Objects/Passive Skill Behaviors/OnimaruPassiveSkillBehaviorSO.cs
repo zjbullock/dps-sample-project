@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Threading.Tasks;
 
 namespace DPS.TacticalCombat {
 [CreateAssetMenu(fileName = "Onimaru Passive Skill Behavior", menuName = "ScriptableObjects/Passive Skill/Behaviors/Onimaru Passive")]
@@ -12,7 +13,7 @@ public class OnimaruPassiveSkillBehaviorSO : StatusEffectPassiveSkillBehaviorSO
     public int soraHealingRate;
 
 #nullable enable
-    public override void ExecuteBeginPhasePassiveSkill(PartySlot partySlot, CombatTileController? combatTileController)
+    public override async Task ExecuteBeginPhasePassiveSkill(PartySlot partySlot, CombatTileController? combatTileController)
     {
         if (partySlot == null)
         {
@@ -30,11 +31,11 @@ public class OnimaruPassiveSkillBehaviorSO : StatusEffectPassiveSkillBehaviorSO
             this.ReduceResolveGauge(characterInfo);
             partySlot.BattleEntityGO.UpdateGauges();
         }
-        base.ExecuteBeginPhasePassiveSkill(partySlot, combatTileController);
+        await base.ExecuteBeginPhasePassiveSkill(partySlot, combatTileController);
 
     }
 
-    public override void ExecuteEndCombatPassiveSkill(PartySlot partySlot) {
+    public override async Task ExecuteEndCombatPassiveSkill(PartySlot partySlot) {
         if (partySlot != null) {
             if (partySlot.GetBattleMember()! != null && partySlot.BattleEntity != null) {
                 CharacterInfo? characterInfo = partySlot.BattleEntity as CharacterInfo;
@@ -42,7 +43,7 @@ public class OnimaruPassiveSkillBehaviorSO : StatusEffectPassiveSkillBehaviorSO
                     characterInfo.resolvePoints = 0;
                 }
             }
-            base.ExecuteEndCombatPassiveSkill(partySlot);
+            await base.ExecuteEndCombatPassiveSkill(partySlot);
 
         } 
     }

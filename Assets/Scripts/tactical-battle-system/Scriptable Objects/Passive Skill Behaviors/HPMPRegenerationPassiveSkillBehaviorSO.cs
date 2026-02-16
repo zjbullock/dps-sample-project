@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace DPS.TacticalCombat {
@@ -30,7 +31,7 @@ public class HPMPRegenerationPassiveSkillBehaviorSO : PassiveSkillBehaviorSO
 
 
     #nullable enable
-    public override void ExecuteBeginPhasePassiveSkill(PartySlot partySlot, CombatTileController? combatTileController)
+    public override async Task ExecuteBeginPhasePassiveSkill(PartySlot partySlot, CombatTileController? combatTileController)
     {
         if (partySlot != null && partySlot.BattleEntity != null) {
             CharacterInfo? characterInfo = partySlot!.BattleEntity! as CharacterInfo;

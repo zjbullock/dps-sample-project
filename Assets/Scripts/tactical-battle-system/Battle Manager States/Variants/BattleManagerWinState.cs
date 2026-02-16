@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace DPS.TacticalCombat {
@@ -17,7 +16,7 @@ public class BattleControllerWinState : BattleControllerBaseState
     [SerializeField]
     private AudioClip victoryFanfair;
 
-    public BattleControllerWinState() {
+    public BattleControllerWinState(string name): base(name) {
         this.winState = WinState.None;
     }
 

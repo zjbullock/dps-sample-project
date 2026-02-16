@@ -7,6 +7,13 @@ namespace DPS.TacticalCombat {
     [System.Serializable]
     public abstract class BattleControllerBaseState
     {
+        public BattleControllerBaseState(string stateName)
+        {
+            this._stateName = stateName;
+        }
+        
+        [SerializeField]
+        protected string _stateName;
 
         protected System.Action _onEnterState = delegate{};
 

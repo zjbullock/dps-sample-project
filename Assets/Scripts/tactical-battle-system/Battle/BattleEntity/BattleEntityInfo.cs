@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using DPS.Common;
+using System.Threading.Tasks;
 
 namespace DPS
 {
@@ -353,7 +354,7 @@ namespace DPS
 
         public abstract List<ActiveSkillSO> GetLearnedActiveSkills();
 
-        public abstract List<ActiveSkillSO> GetEquippedActiveSkills();
+        public abstract Task<List<ActiveSkillSO>> GetEquippedActiveSkills();
     }
 
     }

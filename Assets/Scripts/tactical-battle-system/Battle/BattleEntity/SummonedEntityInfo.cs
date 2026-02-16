@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DPS.Common;
+using System.Threading.Tasks;
 
 namespace DPS.TacticalCombat
 {
@@ -122,7 +123,7 @@ public class SummonedEntityInfo : BattleEntityInfo, IBattleEntity
         return this.GetSkillInfo().GetLearnedActiveSkills();
     }
 
-    public override List<ActiveSkillSO?> GetEquippedActiveSkills()
+    public override async Task<List<ActiveSkillSO?>> GetEquippedActiveSkills()
     {
         return this.GetSkillInfo().EquippedSkills ?? new();
     }

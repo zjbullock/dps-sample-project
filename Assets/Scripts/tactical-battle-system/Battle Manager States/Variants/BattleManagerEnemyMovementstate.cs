@@ -5,7 +5,11 @@ using UnityEngine;
 namespace DPS.TacticalCombat {
 public class BattleControllerEnemyMovementstate : BattleControllerBaseState
 {
-    public override void EnterState(BattleManager battleController)
+        public BattleControllerEnemyMovementstate(string stateName) : base(stateName)
+        {
+        }
+
+        public override void EnterState(BattleManager battleController)
     {
         battleController.CurrentlyActingMember.GetCombatTileController()?.RemoveOccupantAndProcessEvent(battleController);
                 base.EnterState(battleController);

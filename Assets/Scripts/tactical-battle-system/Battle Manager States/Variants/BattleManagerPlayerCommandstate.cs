@@ -5,7 +5,11 @@ using UnityEngine;
 namespace DPS.TacticalCombat {
 public class BattleControllerPlayerCommandstate : BattleControllerBaseState
 {
-    public override void EnterState(BattleManager battleController)
+        public BattleControllerPlayerCommandstate(string stateName) : base(stateName)
+        {
+        }
+
+        public override void EnterState(BattleManager battleController)
     {
         Debug.Log("Entering Player Command State");
         // battleController.BattleMenuController.ActivatePlayerMenu();

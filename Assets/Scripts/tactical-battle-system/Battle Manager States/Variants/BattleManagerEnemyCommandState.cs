@@ -5,7 +5,11 @@ using UnityEngine;
 namespace DPS.TacticalCombat {
 public class BattleControllerEnemyCommandState : BattleControllerBaseState
 {
-    public override void EnterState(BattleManager battleController)
+        public BattleControllerEnemyCommandState(string stateName) : base(stateName)
+        {
+        }
+
+        public override void EnterState(BattleManager battleController)
     {
         battleController.ToggleFreeCameraActiveOnEntity();
         // battleController.SetCameraTarget(battleController.currentlyActingMember.BattleEntityGO.transform);

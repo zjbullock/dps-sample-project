@@ -5,7 +5,11 @@ using UnityEngine;
 namespace DPS.TacticalCombat {
 public class BattleControllerActionPhaseEndState : BattleControllerBaseState
 {
-    public override void EnterState(BattleManager battleController)
+        public BattleControllerActionPhaseEndState(string stateName) : base(stateName)
+        {
+        }
+
+        public override void EnterState(BattleManager battleController)
     {
         base.EnterState(battleController);
         return;

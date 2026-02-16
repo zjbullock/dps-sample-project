@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace DPS.TacticalCombat {
@@ -18,7 +19,7 @@ public abstract class PartySlotController : MonoBehaviour
 
     public List<PartySlot> PartySlots { get => this._partySlots; }
 
-    public abstract void PreparePartyMembers(BattleManager battleController);
+    public abstract Task PreparePartyMembers(BattleManager battleController);
 
     private int GetAliveCounts()
     {

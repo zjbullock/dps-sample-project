@@ -6,8 +6,11 @@ namespace DPS.TacticalCombat {
 [System.Serializable]
 public class BattleControllerEndPhaseState : BattleControllerBaseState
 {
+        public BattleControllerEndPhaseState(string stateName) : base(stateName)
+        {
+        }
 
-    public override void EnterState(BattleManager battleController)
+        public override void EnterState(BattleManager battleController)
     {
         // if (battleController.IsDialogueBoxActive()) {
         //     battleController.ClearDialogueBoxText();

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -25,7 +26,7 @@ public class PassiveSkillSO : ScriptableObject, IBattleActionDescription {
 
 #nullable enable
 
-    public virtual void ExecutePostEquipmentStatAddPassiveSkill(CharacterInfo characterInfo)
+    public virtual async Task ExecutePostEquipmentStatAddPassiveSkill(CharacterInfo characterInfo)
     {
         if (this.passiveSkillBehaviors.Count == 0)
         {

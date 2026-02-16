@@ -6,8 +6,11 @@ using System;
 namespace DPS.TacticalCombat {
 public class BattleControllerResultActionPhaseState : BattleControllerBaseState
 {
+        public BattleControllerResultActionPhaseState(string stateName) : base(stateName)
+        {
+        }
 
-    public override void EnterState(BattleManager battleController)
+        public override void EnterState(BattleManager battleController)
     {
         if(battleController.CurrentlyActingMember.GetBattleMember()!.LoseTurn()) {
             // this.OnActionCompletion(battleController);

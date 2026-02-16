@@ -7,9 +7,11 @@ namespace DPS.TacticalCombat {
 [System.Serializable]
 public class BattleControllerDetermineCommandState : BattleControllerBaseState
 {
+        public BattleControllerDetermineCommandState(string stateName) : base(stateName)
+        {
+        }
 
-
-    private void GetNextPartyMember(BattleManager battleController) {
+        private void GetNextPartyMember(BattleManager battleController) {
         // if (battleController.currentTurnOrder.Count == 0) {
         //     battleController.DetermineIfBattleOver();
         //     return;

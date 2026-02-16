@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Threading.Tasks;
 
 namespace DPS.TacticalCombat {
 [CreateAssetMenu(fileName = "Buff Passive Skill Behavior", menuName = "ScriptableObjects/Passive Skill/Behaviors/Buff Passive")]
@@ -47,43 +48,43 @@ public class StatusEffectPassiveSkillBehaviorSO : PassiveSkillBehaviorSO
     private bool canOnlyApplyOneBuff = true;
 
     #nullable enable
-    public override void ExecuteHPChangePassiveSkill(PartySlot partySlot, CombatTileController? combatTileController) {
-        this.ProcessStatusEffect(partySlot, combatTileController, this.passiveBuffHpChange);
+    public override async Task ExecuteHPChangePassiveSkill(PartySlot partySlot, CombatTileController? combatTileController) {
+        await this.ProcessStatusEffect(partySlot, combatTileController, this.passiveBuffHpChange);
     }
 
-    public override void ExecuteEndPhasePassiveSkill(PartySlot partySlot, CombatTileController? combatTileController) {
-        this.ProcessStatusEffect(partySlot, combatTileController, this.passiveBuffEndPhaseChange);
+    public override async Task ExecuteEndPhasePassiveSkill(PartySlot partySlot, CombatTileController? combatTileController) {
+        await this.ProcessStatusEffect(partySlot, combatTileController, this.passiveBuffEndPhaseChange);
     }
 
-    public override void ExecutePostCommandAbilities(PartySlot partySlot, CombatTileController? combatTileController){
-        this.ProcessStatusEffect(partySlot, combatTileController, this.passiveBuffPostCommandChange);
+    public override async Task ExecutePostCommandAbilities(PartySlot partySlot, CombatTileController? combatTileController){
+        await this.ProcessStatusEffect(partySlot, combatTileController, this.passiveBuffPostCommandChange);
     }
 
-    public override void ExecuteBeginPhasePassiveSkill(PartySlot partySlot, CombatTileController? combatTileController){
-        this.ProcessStatusEffect(partySlot, combatTileController, this.passiveBuffBeginPhaseChange);
+    public override async Task ExecuteBeginPhasePassiveSkill(PartySlot partySlot, CombatTileController? combatTileController){
+        await this.ProcessStatusEffect(partySlot, combatTileController, this.passiveBuffBeginPhaseChange);
     }
 
-    public override void ExecutePostMovePassiveSkill(PartySlot partySlot, CombatTileController? combatTileController) {
-        this.ProcessStatusEffect(partySlot, combatTileController, this.passiveBuffPostMove);
+    public override async Task ExecutePostMovePassiveSkill(PartySlot partySlot, CombatTileController? combatTileController) {
+        await this.ProcessStatusEffect(partySlot, combatTileController, this.passiveBuffPostMove);
     }
 
-    public override void ExecuteBeginCombatPassiveSkill(PartySlot partySlot, CombatTileController? combatTileController)
+    public override async Task ExecuteBeginCombatPassiveSkill(PartySlot partySlot, CombatTileController? combatTileController)
     {
-        this.ProcessStatusEffect(partySlot, combatTileController, this.passiveBuffBeginCombatChange);
+        await this.ProcessStatusEffect(partySlot, combatTileController, this.passiveBuffBeginCombatChange);
     }
 
-    public override void ExecutePostBlockPassiveSkill(PartySlot partySlot, CombatTileController? combatTileController)
+    public override async Task ExecutePostBlockPassiveSkill(PartySlot partySlot, CombatTileController? combatTileController)
     {
-        this.ProcessStatusEffect(partySlot, combatTileController, this.passiveBuffPostBlock);
+        await this.ProcessStatusEffect(partySlot, combatTileController, this.passiveBuffPostBlock);
     }
 
-    public override void ExecutePostEvadePassiveSkill(PartySlot partySlot, CombatTileController? combatTileController)
+    public override async Task ExecutePostEvadePassiveSkill(PartySlot partySlot, CombatTileController? combatTileController)
     {
-        this.ProcessStatusEffect(partySlot, combatTileController, this.passiveBuffPostEvade);
+        await this.ProcessStatusEffect(partySlot, combatTileController, this.passiveBuffPostEvade);
     }
 
 
-    private void ProcessStatusEffect(PartySlot partySlot, CombatTileController? combatTileController, List<StatusEffectAndCondition> passiveBuffs)
+    private async Task ProcessStatusEffect(PartySlot partySlot, CombatTileController? combatTileController, List<StatusEffectAndCondition> passiveBuffs)
     {
         if (partySlot == null || partySlot.BattleEntity == null)
         {

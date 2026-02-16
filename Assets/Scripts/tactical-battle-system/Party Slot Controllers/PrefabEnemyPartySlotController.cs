@@ -1,17 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace DPS.TacticalCombat {
 public class PrefabEnemyPartySlotController : EnemyPartySlotController
 {
-    
-    public override void PreparePartyMembers(BattleManager battleController)
+
+        // public override async Task PreparePartyMembers(BattleManager battleController)
+        // {
+        //     this.GetEnemyGameObjects(battleController);
+        //     await base.PreparePartyMembers(battleController);
+        //     return null;
+        // }
+
+    public override async Task PreparePartyMembers(BattleManager battleController)
     {
         this.GetEnemyGameObjects(battleController);
-        base.PreparePartyMembers(battleController);
-
+        return;
     }
+
     
     #nullable enable
 

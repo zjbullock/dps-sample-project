@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using DPS.Common;
+using System.Threading.Tasks;
 
 namespace DPS.TacticalCombat {
 public class EnemyInfo: BattleEntityInfo   {
@@ -194,7 +195,7 @@ public class EnemyInfo: BattleEntityInfo   {
         return new();
     }
 
-    public override List<ActiveSkillSO> GetEquippedActiveSkills()
+    public override async Task<List<ActiveSkillSO>> GetEquippedActiveSkills()
     {
         return new();
     }

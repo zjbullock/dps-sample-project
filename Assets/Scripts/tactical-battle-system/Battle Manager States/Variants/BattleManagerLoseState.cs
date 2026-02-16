@@ -12,9 +12,10 @@ public class BattleControllerLoseState : BattleControllerBaseState
 
     // private LoseState loseState;
 
-    public BattleControllerLoseState() {
+    public BattleControllerLoseState(string name): base(name) {
         // this.loseState = LoseState.Result;
     }
+
     public override void EnterState(BattleManager battleController)
     {
         base.EnterState(battleController);

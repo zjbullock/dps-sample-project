@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DPS.Common;
+using System.Threading.Tasks;
 
 namespace DPS
 {
@@ -71,7 +72,7 @@ namespace DPS
 
                         List<ActiveSkillSO> GetLearnedActiveSkills();
 
-                        List<ActiveSkillSO> GetEquippedActiveSkills();
+                        Task<List<ActiveSkillSO>> GetEquippedActiveSkills();
 
                         Movement GetMovement();
 

@@ -9,6 +9,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Collections.ObjectModel;
 using DPS.TacticalCombat;
 using DPS.Common;
+using System.Threading.Tasks;
 
 namespace DPS.TacticalCombat {
 public class BattleManager : MonoBehaviour
@@ -297,7 +298,7 @@ public class BattleManager : MonoBehaviour
 
     public BattleAnimationSpawner BattleAnimationSpawner { get => this._battleAnimationSpawner; }
 
-    [SerializeField]
+    [SerializeField, SerializeReference]
     private BattleManagerStates _stateManager;
 
     public BattleManagerStates StateManager { get => this._stateManager; }
@@ -412,10 +413,13 @@ public class BattleManager : MonoBehaviour
         // this.StopTimeController();
     }
 
-    public void PreparePartyMembers()
+    public async Task PreparePartyMembers()
     {
-        this.PlayerPartyController.PreparePartyMembers(this);
-        this.EnemyPartyController.PreparePartyMembers(this);
+        await this.PlayerPartyController.PreparePartyMembers(this);
+        Debug.Log("Finished awaiting Player Party Prep");
+        await this.EnemyPartyController.PreparePartyMembers(this);
+        Debug.Log("Finished awaiting Party Member Prep");
+        return;
     }
 
     public void TogglePartyMemberObjects(bool active)

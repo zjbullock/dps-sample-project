@@ -9,11 +9,14 @@ namespace DPS.TacticalCombat{
 [System.Serializable]
 public class BattleControllerDeclareActionPhaseState : BattleControllerBaseState
 {
+        public BattleControllerDeclareActionPhaseState(string stateName) : base(stateName)
+        {
+        }
 
-    // [SerializeField]
-    // private SignalAsset battleCamToSideCamSignal;
+        // [SerializeField]
+        // private SignalAsset battleCamToSideCamSignal;
 
-    public override void EnterState(BattleManager battleController)
+        public override void EnterState(BattleManager battleController)
     {
 
         this.CheckEnemyTiles(battleController);

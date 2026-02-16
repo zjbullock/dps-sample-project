@@ -112,11 +112,11 @@ public class EquipmentSlotsSO {
 
     public AssetReferenceT<WeaponRuneEquipmentSO> WeaponRune;
     // public EquipmentSO OffHand;
-    public HelmEquipmentSO Helm;
-    public BodyEquipmentSO Armor;
-    public BootsEquipmentSO Boots;
-    public AccessoryEquipmentSO Accessory_1;
-    public AccessoryEquipmentSO Accessory_2;
+    public AssetReferenceT<HelmEquipmentSO> Helm;
+    public AssetReferenceT<BodyEquipmentSO> Armor;
+    public AssetReferenceT<BootsEquipmentSO> Boots;
+    public AssetReferenceT<AccessoryEquipmentSO> Accessory_1;
+    public AssetReferenceT<AccessoryEquipmentSO> Accessory_2;
 
 }
 }
